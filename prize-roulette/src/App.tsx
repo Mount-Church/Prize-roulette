@@ -21,7 +21,7 @@ const prizes = [
   { id: 1, name: 'Presente surpresa', color: 'bg-red-600' },
   { id: 2, name: 'Chocolate', color: 'bg-amber-900' },
   { id: 3, name: 'Oração do Lider', color: 'bg-yellow-300' },
-  { id: 4, name: 'Oração da sua escolha', color: 'bg-pink-400' },
+  { id: 4, name: 'Escolher quem vai orar por você', color: 'bg-pink-400' },
   { id: 5, name: 'Biscoitos', color: 'bg-amber-400' },
   { id: 6, name: 'Bombom', color: 'bg-green-600' },
   { id: 7, name: 'Bala', color: 'bg-orange-400' },
