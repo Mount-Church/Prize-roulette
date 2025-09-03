@@ -97,7 +97,7 @@ export const Wheel: React.FC<WheelProps> = ({
     <div className="relative w-full h-0 pb-[100%] max-w-[32rem] mx-auto">
       <div 
         ref={wheelRef}
-        className="absolute inset-0 rounded-full border-8 border-amber-800 shadow-xl overflow-visible transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl transform-gpu"
+        className="absolute inset-0 rounded-full shadow-xl transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl transform-gpu overflow-hidden"
         style={{
           transform: 'rotate(0deg)',
           width: '100%',
@@ -106,7 +106,9 @@ export const Wheel: React.FC<WheelProps> = ({
           top: 0,
           left: 0,
           background: 'radial-gradient(circle, #fde68a 0%, #d97706 100%)',
-          boxShadow: 'inset 0 0 30px rgba(120, 53, 15, 0.5)'
+          boxShadow: 'inset 0 0 30px rgba(120, 53, 15, 0.5)',
+          border: '12px solid #f59e0b',
+          boxSizing: 'border-box' as const
         }}
       >
         {/* Pizza crust */}
