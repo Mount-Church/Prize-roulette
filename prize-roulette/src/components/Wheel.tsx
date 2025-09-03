@@ -35,7 +35,10 @@ export const Wheel: React.FC<WheelProps> = ({
     const rotation = startRotationRef.current + (targetRotationRef.current - startRotationRef.current) * easedProgress;
     
     if (wheelRef.current) {
-      wheelRef.current.style.transform = `rotate(${rotation}deg)`;
+      // Use transform3d for better performance and to prevent layout shifts
+      wheelRef.current.style.transform = `translateZ(0) rotate(${rotation}deg)`;
+      // Force hardware acceleration
+      wheelRef.current.style.willChange = 'transform';
     }
 
     if (progress < 1) {
@@ -94,29 +97,31 @@ export const Wheel: React.FC<WheelProps> = ({
   const segmentAngle = 360 / prizes.length;
 
   return (
-    <div className="relative w-full h-0 pb-[100%] max-w-[32rem] mx-auto">
-      <div 
-        ref={wheelRef}
-        className="absolute inset-0 rounded-full shadow-xl transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl transform-gpu overflow-hidden"
-        style={{
-          transform: 'rotate(0deg)',
-          width: '100%',
-          height: '100%',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          background: 'radial-gradient(circle, #fde68a 0%, #d97706 100%)',
-          boxShadow: 'inset 0 0 30px rgba(120, 53, 15, 0.5)',
-          border: '12px solid #f59e0b',
-          boxSizing: 'border-box' as const
-        }}
-      >
+    <div className="w-full max-w-2xl mx-auto">
+      <div className="relative w-full h-0 pb-[100%]" style={{
+        contain: 'layout style paint',
+        transform: 'translateZ(0)'
+      }}>
+        <div 
+          ref={wheelRef}
+          className="absolute inset-0 rounded-full shadow-xl will-change-transform transform-gpu overflow-hidden"
+          style={{
+            transform: 'rotate(0deg)',
+            width: '100%',
+            height: '100%',
+            transition: 'transform 0.05s ease-out',
+            WebkitBackfaceVisibility: 'hidden',
+            transformStyle: 'preserve-3d',
+            WebkitTransformStyle: 'preserve-3d',
+            willChange: 'transform'
+          }}
+        >
         {/* Pizza crust */}
         <div className="absolute inset-0 rounded-full border-8 border-amber-900 bg-amber-800">
           <div className="absolute inset-0 rounded-full" style={{
             background: 'radial-gradient(circle at 30% 30%, #fde68a 0%, #d97706 100%)',
             boxShadow: 'inset 0 0 20px rgba(0,0,0,0.2)'
-          }}></div>
+          }} />
         </div>
         
         {prizes.map((prize, index) => {
@@ -124,7 +129,7 @@ export const Wheel: React.FC<WheelProps> = ({
           const middleAngle = rotation + (segmentAngle / 2);
           
           return (
-            <div key={prize.id}>
+            <div key={`prize-${prize.id}`}>
               {/* Pizza slice */}
               <div
                 className="absolute top-0 left-0 w-full h-full origin-center"
@@ -146,43 +151,16 @@ export const Wheel: React.FC<WheelProps> = ({
                     backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)',
                     backgroundSize: '15px 15px',
                     opacity: '0.6'
-                  }}></div>
+                  }} />
                   
                   {/* Cheese texture */}
                   <div className="absolute inset-0" style={{
                     backgroundImage: 'radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, transparent 70%)',
-                  }}></div>
+                  }} />
                 </div>
               </div>
               
-              {/* Prize name */}
-              <div 
-                className="absolute text-center font-bold text-white"
-                style={{
-                  left: '50%',
-                  top: '50%',
-                  transform: `translate(-50%, -50%) rotate(${middleAngle > 90 && middleAngle < 270 ? middleAngle + 180 : middleAngle}deg)`,
-                  textShadow: '1px 1px 3px rgba(0,0,0,0.8), -1px -1px 3px rgba(0,0,0,0.4)',
-                  width: 'max-content',
-                  maxWidth: '35%',
-                  color: '#fff',
-                  fontWeight: 800,
-                  textTransform: 'uppercase' as const,
-                  fontSize: '0.7rem',
-                  letterSpacing: '0.5px',
-                  padding: '4px 12px',
-                  borderRadius: '20px',
-                  backgroundColor: 'rgba(0,0,0,0.4)',
-                  backdropFilter: 'blur(4px)',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
-                  whiteSpace: 'nowrap' as const,
-                  overflow: 'hidden' as const,
-                  textOverflow: 'ellipsis' as const
-                }}
-              >
-                {prize.name}
-              </div>
+              {/* Texto removido conforme solicitado */}
             </div>
           );
         })}
@@ -221,6 +199,22 @@ export const Wheel: React.FC<WheelProps> = ({
               <span className="animate-pulse">GIRAR</span>
             )}
           </div>
+        </div>
+        </div>
+      </div>
+      
+      {/* Tabela de prêmios simples */}
+      <div className="mt-8 w-full max-w-md mx-auto">
+        <h2 className="text-2xl font-bold text-center mb-4 text-gray-800 dark:text-white">Lista de Prêmios</h2>
+        <div className="space-y-2">
+          {prizes.map((prize, index) => (
+            <div 
+              key={`prize-${prize.id}`}
+              className={`${prize.color} text-white font-medium py-3 px-4 rounded-md shadow`}
+            >
+              {index + 1} - {prize.name}
+            </div>
+          ))}
         </div>
       </div>
     </div>

@@ -17,14 +17,14 @@ type PrizeHistory = Prize & {
 
 // Cores para cada seção da roleta (temas de pizza)
 const prizes = [
-  { id: 1, name: 'Presente surpresa', color: 'bg-red-600' },    // Molho de tomate
-  { id: 2, name: 'Chocolate', color: 'bg-amber-900' },          // Chocolate
-  { id: 3, name: 'Brinquedo', color: 'bg-yellow-300' },         // Queijo
-  { id: 4, name: 'Doces', color: 'bg-pink-400' },               // Peperoni
-  { id: 5, name: 'Biscoitos', color: 'bg-amber-400' },          // Bacon
-  { id: 6, name: 'Bombons', color: 'bg-green-600' },            // Manjericão
-  { id: 7, name: 'Bala', color: 'bg-orange-400' },              // Calabresa
-  { id: 8, name: 'Pirulito', color: 'bg-purple-500' },          // Berinjela
+  { id: 1, name: 'Presente surpresa', color: 'bg-red-600' },
+  { id: 2, name: 'Chocolate', color: 'bg-amber-900' },
+  { id: 3, name: 'Oração do Lider', color: 'bg-yellow-300' },
+  { id: 4, name: 'Oração da sua escolha', color: 'bg-pink-400' },
+  { id: 5, name: 'Biscoitos', color: 'bg-amber-400' },
+  { id: 6, name: 'Bombom', color: 'bg-green-600' },
+  { id: 7, name: 'Bala', color: 'bg-orange-400' },
+  { id: 8, name: 'Pirulito', color: 'bg-purple-500' },
 ];
 
 function App() {
@@ -38,11 +38,11 @@ function App() {
     // Check for saved theme preference or use system preference
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    
+
     // If no saved preference, use system preference
     const initialTheme = savedTheme ? savedTheme === 'dark' : prefersDark;
     setDarkMode(initialTheme);
-    
+
     // Listen for system theme changes
     const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
     const handleChange = (e: MediaQueryListEvent) => {
@@ -52,7 +52,7 @@ function App() {
         updateTheme(e.matches);
       }
     };
-    
+
     mediaQuery.addEventListener('change', handleChange);
     return () => mediaQuery.removeEventListener('change', handleChange);
   }, []);
@@ -79,11 +79,11 @@ function App() {
   const toggleTheme = () => {
     setDarkMode(prev => !prev);
   };
-  
+
   // Efeito de confete
   const triggerConfetti = useCallback(() => {
     const count = 200;
-    
+
     const shoot = () => {
       // Primeira explosão de confete (centro)
       confetti({
@@ -164,7 +164,7 @@ function App() {
   return (
     <div className="App">
       {/* Theme Toggle Button */}
-      <button 
+      <button
         className="fixed top-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
         onClick={toggleTheme}
         aria-label={darkMode ? 'Alternar para tema claro' : 'Alternar para tema escuro'}
@@ -207,13 +207,13 @@ function App() {
         </div>
 
       </main>
-      
+
       {prizeHistory.length > 0 && (
         <div className="w-full max-w-2xl mx-auto mt-8 px-4">
           <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">Histórico de Prêmios</h2>
           <ul className="history-list space-y-2">
             {prizeHistory.slice(0, 6).map((item, index) => (
-              <li 
+              <li
                 key={index}
                 className="history-item bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-3 shadow-sm transform transition-all duration-300 hover:scale-[1.02] hover:shadow-md border border-gray-100 dark:border-gray-700"
                 style={{

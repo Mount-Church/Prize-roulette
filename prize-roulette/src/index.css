@@ -2,6 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Animações para a tabela de prêmios */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes progress {
+  0% { width: 0; opacity: 0.3; }
+  100% { width: 100%; opacity: 1; }
+}
+
+/* Aplicando as animações */
+.prize-card {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.progress-bar {
+  animation: progress 1.5s ease-in-out infinite;
+}
+
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
