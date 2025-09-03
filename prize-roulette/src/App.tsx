@@ -1,5 +1,19 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import confetti from 'canvas-confetti';
+import { playWinSound, playSpinSound } from './utils/audioUtils';
+import { Wheel } from './components/Wheel';
+// Ícones substituídos por emojis para evitar dependência externa
 import './App.css';
+
+type Prize = {
+  id: number;
+  name: string;
+  color: string;
+};
+
+type PrizeHistory = Prize & {
+  timestamp: number;
+};
 
 // Cores para cada seção da roleta
 const prizes = [
@@ -13,131 +27,209 @@ const prizes = [
 
 function App() {
   const [spinning, setSpinning] = useState(false);
-  const [result, setResult] = useState('');
-  const wheelRef = useRef<HTMLDivElement>(null);
+  const [result, setResult] = useState('Clique em "Girar Roleta" para começar!');
+  const [prizeHistory, setPrizeHistory] = useState<PrizeHistory[]>([]);
+  const [darkMode, setDarkMode] = useState(false);
 
-  const spinWheel = () => {
-    if (spinning) return;
+  // Initialize theme on component mount
+  useEffect(() => {
+    // Check for saved theme preference or use system preference
+    const savedTheme = localStorage.getItem('theme');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     
-    setSpinning(true);
-    setResult('Girando...');
+    // If no saved preference, use system preference
+    const initialTheme = savedTheme ? savedTheme === 'dark' : prefersDark;
+    setDarkMode(initialTheme);
     
-    // Tempo aleatório para a roleta girar (entre 3 e 5 segundos)
-    const spinTime = 3000 + Math.random() * 2000;
+    // Listen for system theme changes
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e: MediaQueryListEvent) => {
+      // Only update if user hasn't set a preference
+      if (!localStorage.getItem('theme')) {
+        setDarkMode(e.matches);
+        updateTheme(e.matches);
+      }
+    };
     
-    // Gira a roleta
-    if (wheelRef.current) {
-      const currentRotation = parseInt(wheelRef.current.style.transform?.replace(/[^0-9]/g, '') || '0');
-      const newRotation = currentRotation + 360 * 5 + Math.floor(Math.random() * 360); // 5 voltas completas + posição aleatória
-      
-      wheelRef.current.style.transition = `transform ${spinTime}ms cubic-bezier(0.17, 0.67, 0.12, 0.99)`;
-      wheelRef.current.style.transform = `rotate(${newRotation}deg)`;
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  // Update theme when darkMode changes
+  useEffect(() => {
+    if (typeof darkMode === 'boolean') {
+      updateTheme(darkMode);
     }
-    
-    // Define o resultado após o término da rotação
-    setTimeout(() => {
-      const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-      setResult(`Você ganhou: ${randomPrize.name}`);
-      setSpinning(false);
-    }, spinTime);
+  }, [darkMode]);
+
+  const updateTheme = (isDark: boolean) => {
+    if (isDark) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
   };
 
-  // Efeito para resetar a transição após a rotação
-  useEffect(() => {
-    if (wheelRef.current && !spinning) {
-      // Remove a transição suave para resetar a posição
-      wheelRef.current.style.transition = 'none';
-      // Mantém a posição final, mas remove as voltas completas
-      const currentRotation = parseInt(wheelRef.current.style.transform?.replace(/[^0-9]/g, '') || '0');
-      const finalRotation = currentRotation % 360;
-      wheelRef.current.style.transform = `rotate(${finalRotation}deg)`;
-      
-      // Força um reflow para aplicar a mudança
-      void wheelRef.current.offsetWidth;
-    }
-  }, [spinning]);
+  const toggleTheme = () => {
+    setDarkMode(prev => !prev);
+  };
+  
+  // Efeito de confete
+  const triggerConfetti = useCallback(() => {
+    const count = 200;
+    
+    const shoot = () => {
+      // Primeira explosão de confete (centro)
+      confetti({
+        particleCount: Math.floor(count * 0.25),
+        spread: 100,
+        ticks: 100,
+        gravity: 1,
+        decay: 0.94,
+        startVelocity: 30,
+        origin: { x: 0.5, y: 0.7 },
+        scalar: 1.2,
+        shapes: ['circle'],
+        colors: ['#FF0000', '#0000FF', '#00FF00', '#FFFF00', '#FF00FF', '#00FFFF'],
+      });
+
+      // Segunda explosão de confete (esquerda)
+      setTimeout(() => {
+        confetti({
+          particleCount: Math.floor(count * 0.2),
+          spread: 100,
+          ticks: 100,
+          gravity: 1,
+          decay: 0.94,
+          startVelocity: 25,
+          origin: { x: 0.3, y: 0.7 },
+          scalar: 0.75,
+          shapes: ['circle'],
+          colors: ['#FF0000', '#0000FF', '#00FF00', '#FFFF00', '#FF00FF', '#00FFFF'],
+        });
+      }, 250);
+
+      // Terceira explosão de confete (direita)
+      setTimeout(() => {
+        confetti({
+          particleCount: Math.floor(count * 0.1),
+          spread: 100,
+          ticks: 100,
+          gravity: 1,
+          decay: 0.94,
+          startVelocity: 35,
+          origin: { x: 0.7, y: 0.7 },
+          scalar: 1.5,
+          shapes: ['star'],
+          colors: ['#FF0000', '#0000FF', '#00FF00', '#FFFF00', '#FF00FF', '#00FFFF'],
+        });
+      }, 400);
+    };
+
+    shoot();
+  }, []);
+
+  const handleSpinStart = useCallback(() => {
+    setSpinning(true);
+    setResult('Girando...');
+    playSpinSound();
+  }, []);
+
+  const handleSpinEnd = useCallback((prize: { id: number; name: string; color: string }) => {
+    setResult(`Você ganhou: ${prize.name}`);
+    setPrizeHistory(prev => [
+      { ...prize, timestamp: Date.now() },
+      ...prev.slice(0, 4)
+    ]);
+    playWinSound();
+    triggerConfetti();
+    setSpinning(false);
+  }, [triggerConfetti]);
+
+  // Formatar a data para exibição
+  const formatTime = (timestamp: number) => {
+    return new Date(timestamp).toLocaleTimeString('pt-BR', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 flex flex-col items-center justify-center p-8">
-      <h1 className="text-5xl font-bold text-gray-800 mb-12 text-center">Roleta de Prêmios</h1>
+    <div className="App">
+      {/* Theme Toggle Button */}
+      <button 
+        className="fixed top-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
+        onClick={toggleTheme}
+        aria-label={darkMode ? 'Alternar para tema claro' : 'Alternar para tema escuro'}
+      >
+        {darkMode ? (
+          <span className="text-yellow-400 text-2xl">☀️</span>
+        ) : (
+          <span className="text-gray-700 dark:text-gray-200 text-2xl">🌙</span>
+        )}
+      </button>
+
+      <header className="header">
+        <h1 className="title">Roleta de Prêmios</h1>
+        <p className="subtitle">Gire a roleta e descubra qual prêmio você ganhou!</p>
+      </header>
+
+      <main>
+        <div className="wheel-container">
+          <Wheel
+            spinning={spinning}
+            onSpinStart={handleSpinStart}
+            onSpinEnd={handleSpinEnd}
+            prizes={prizes}
+          />
+        </div>
+
+        <div className={`result-display ${!result.includes('Girar') ? 'winner' : ''}`}>
+          <p className="result-text animate-fade-in">
+            {!result.includes('Girar') ? (
+              <span className="animate-color-change bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">
+                <span className="inline-block animate-bounce" style={{ animationDuration: '2s' }}>🎉</span>
+                <span className="ml-2">{result}</span>
+              </span>
+            ) : (
+              <span className="text-gray-600 dark:text-gray-300">{result}</span>
+            )}
+          </p>
+        </div>
+
+      </main>
       
-      <div className="relative w-[600px] h-[600px] flex items-center justify-center">
-        <div 
-          className="relative w-full h-full rounded-full overflow-hidden border-8 border-gray-200 shadow-2xl"
-          ref={wheelRef}
-          style={{
-            transition: 'transform 3s cubic-bezier(0.17, 0.67, 0.12, 0.99)',
-            transform: `rotate(${spinning ? '1080' : '0'}deg)`,
-          }}
-        >
-          {prizes.map((prize, index) => {
-            const rotation = (360 / 6) * index;
-            const skew = 90 - (360 / 6);
-            
-            return (
-              <div
-                key={prize.id}
-                className={`absolute w-1/2 h-1/2 ${prize.color} origin-bottom-right`}
+      {prizeHistory.length > 0 && (
+        <div className="history-container">
+          <h2 className="history-title">Histórico de Prêmios</h2>
+          <ul className="history-list space-y-2">
+            {prizeHistory.slice(0, 6).map((item, index) => (
+              <li 
+                key={index}
+                className="history-item bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-3 shadow-sm transform transition-all duration-300 hover:scale-[1.02] hover:shadow-md border border-gray-100 dark:border-gray-700"
                 style={{
-                  transform: `rotate(${rotation}deg) skewY(${skew}deg)`,
+                  animation: `fadeIn 0.3s ease-out ${index * 0.1}s both`,
+                  opacity: 0,
+                  transform: 'translateX(-10px)'
                 }}
               >
-                <div 
-                  className="absolute text-white font-bold text-lg sm:text-xl md:text-2xl"
-                  style={{
-                    transform: `rotate(${90 + (360 / 6 / 2)}deg)`,
-                    transformOrigin: '0 0',
-                    left: '50%',
-                    top: '50%',
-                    marginLeft: '110px',
-                    marginTop: '40px',
-                    textShadow: '1px 1px 3px rgba(0,0,0,0.9)',
-                    pointerEvents: 'none',
-                    width: '140px',
-                    lineHeight: '1.3',
-                    textAlign: 'center',
-                    zIndex: 10,
-                    whiteSpace: 'nowrap',
-                    fontFamily: '"Arial Black", Arial, sans-serif',
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.5px'
-                  }}
-                >
-                  {prize.name}
-                </div>
-              </div>
-            );
-          })}
+                <span className="history-prize font-medium text-gray-800 dark:text-gray-100">
+                  {item.name}
+                </span>
+                <span className="history-time text-sm text-gray-500 dark:text-gray-400 flex items-center mt-1">
+                  <span className="inline-block mr-1">🕒</span>
+                  {formatTime(item.timestamp)}
+                </span>
+              </li>
+            ))}
+          </ul>
         </div>
-        
-        {/* Botão central */}
-        <div 
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-28 h-28 z-20"
-          onClick={(e) => {
-            e.stopPropagation();
-            spinWheel();
-          }}
-        >
-          <div className="w-full h-full bg-white rounded-full flex items-center justify-center shadow-lg cursor-pointer">
-            <div className="w-24 h-24 bg-red-600 rounded-full flex items-center justify-center text-white font-bold text-xl hover:bg-red-700 transition-colors">
-              GIRAR
-            </div>
-          </div>
-        </div>
-        
-        {/* Indicador de posição */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-l-12 border-r-12 border-b-24 border-l-transparent border-r-transparent border-b-red-600 z-30" />
-      </div>
-      
-      {/* Resultado */}
-      <div className="text-3xl font-bold text-gray-800 text-center min-h-16 mt-8 p-4 bg-white rounded-lg shadow-md">
-        {result}
-      </div>
-      
-      {/* Instruções */}
-      <p className="mt-8 text-gray-600 text-center">
-        Clique na roleta ou no botão "Girar" para tentar a sorte!
-      </p>
+      )}
     </div>
   );
 }

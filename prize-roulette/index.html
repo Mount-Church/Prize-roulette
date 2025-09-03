@@ -1,13 +1,55 @@
 <!doctype html>
-<html lang="en">
+<html lang="pt-BR" class="light">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite + React + TS</title>
+    <meta name="description" content="Divirta-se com nossa roleta de prêmios interativa! Gire a roleta para descobrir qual prêmio você ganhou." />
+    <meta name="theme-color" content="#7c3aed" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1f2937" media="(prefers-color-scheme: dark)">
+    <meta name="author" content="Prize Roulette" />
+    <title>Roleta de Prêmios | Divirta-se e Ganhe Prêmios</title>
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"></noscript>
+    
+    <!-- Meta tags para compartilhamento -->
+    <meta property="og:title" content="Roleta de Prêmios | Divirta-se e Ganhe Prêmios" />
+    <meta property="og:description" content="Gire nossa roleta interativa e descubra qual prêmio você vai ganhar hoje!" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://prize-roulette.vercel.app" />
+    <meta property="og:image" content="/preview.jpg" />
+    
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="manifest" href="/site.webmanifest">
+    
+    <!-- Theme and color scheme -->
+    <meta name="color-scheme" content="light dark">
+    
+    <script>
+      // Apply theme before page renders to prevent flash of unstyled content
+      (function() {
+        const theme = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        if (theme === 'dark' || (!theme && prefersDark)) {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.setAttribute('data-theme', 'light');
+          document.documentElement.classList.remove('dark');
+        }
+      })();
+    </script>
   </head>
-  <body>
+  <body class="min-h-screen bg-background text-text transition-colors duration-200">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   </body>
 </html>

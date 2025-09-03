@@ -1,24 +1,329 @@
+/* Light theme (default) */
+:root {
+  --primary: #7c3aed;
+  --primary-light: #a78bfa;
+  --background: #f9fafb;
+  --card-bg: #ffffff;
+  --text: #1f2937;
+  --text-secondary: #6b7280;
+  --success: #10b981;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* Dark theme */
+[data-theme='dark'] {
+  --background: #111827;
+  --card-bg: #1f2937;
+  --text: #f9fafb;
+  --text-secondary: #9ca3af;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  background-color: var(--background);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+/* Apply dark mode to all elements */
+[data-theme='dark'] .card,
+[data-theme='dark'] .result-display,
+[data-theme='dark'] .history-container {
+  background-color: var(--card-bg);
+  color: var(--text);
+}
+
+[data-theme='dark'] .history-item {
+  border-color: #374151;
+}
+
+[data-theme='dark'] .button {
+  background-color: var(--primary);
+  color: white;
+}
+
+[data-theme='dark'] .button:hover {
+  background-color: #6d28d9;
+}
+
+[data-theme='dark'] .button:disabled {
+  background-color: #4b5563;
+}
+
 #root {
-  max-width: 1280px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 2rem;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Wheel Container */
+.wheel-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto 2.5rem;
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Result Display */
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes colorChange {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
+}
+
+.animate-color-change {
+  background-size: 200% auto;
+  animation: colorChange 3s ease infinite;
+  display: inline-block;
+  font-weight: 700;
+  padding: 0.25rem 0.75rem;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.result-display {
+  background: var(--card-bg);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  margin: 1rem 0 2rem;
+  box-shadow: var(--shadow);
+  min-height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  overflow: hidden;
+  position: relative;
+}
+
+.result-display.winner {
+  border-color: var(--success);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+}
+
+.result-text {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+  color: var(--text);
+}
+
+/* Buttons */
+.button {
+  background: var(--primary);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
+.button:active {
+  transform: translateY(0);
+}
+
+.button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important;
+}
+
+/* History */
+.history-container {
+  width: 100%;
+  max-width: 600px;
+  margin-top: 2rem;
+}
+
+.history-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text);
   text-align: center;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
-}
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
-}
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+.history-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  padding: 0;
+  margin: 0;
 }
 
-@keyframes logo-spin {
+.history-item {
+  background: var(--card-bg);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease;
+}
+
+.history-item:hover {
+  transform: translateY(-2px);
+}
+
+.history-prize {
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: var(--text);
+}
+
+.history-time {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* Theme Toggle */
+.theme-toggle {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  background: var(--card-bg);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: var(--shadow);
+  transition: all 0.3s ease;
+}
+
+.theme-toggle:hover {
+  transform: rotate(30deg);
+}
+
+/* Melhorias de responsividade */
+@media (max-width: 768px) {
+  #root {
+    padding: 1rem 0.5rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .result-text {
+    font-size: 1.25rem;
+  }
+  
+  .button {
+    width: 100%;
+    max-width: 300px;
+    padding: 0.75rem;
+  }
+  
+  .history-list {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 480px) {
+  .title {
+    font-size: 2rem;
+  }
+  
+  .subtitle {
+    font-size: 1rem;
+  }
+  
+  .result-text {
+    font-size: 1.25rem;
+  }
+  
+  .history-list {
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+/* Animações */
+@keyframes spin {
   from {
     transform: rotate(0deg);
   }
@@ -27,16 +332,188 @@
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.2);
+    opacity: 0.7;
   }
 }
 
-.card {
-  padding: 2em;
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-10px);
+  }
+  60% {
+    transform: translateY(-5px);
+  }
 }
 
-.read-the-docs {
-  color: #888;
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+.history-item {
+  transition: all 0.3s ease;
+}
+
+.history-item:hover {
+  transform: translateX(5px);
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Efeito de brilho no botão de girar */
+/* Melhorias de acessibilidade */
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Melhorias no tema escuro */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --background: #111827;
+    --card-bg: #1f2937;
+    --text: #f9fafb;
+    --text-secondary: #9ca3af;
+  }
+}
+
+/* Melhorias de animação */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+}
+
+@keyframes glow {
+  from {
+    box-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 15px var(--primary), 0 0 20px var(--primary);
+  }
+  to {
+    box-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #0073e6, 0 0 40px #0073e6;
+  }
+}
+
+.glow-on-hover {
+  transition: all 0.3s ease;
+}
+
+.glow-on-hover:hover {
+  animation: glow 1s ease-in-out infinite alternate;
+}
+
+/* Custom styles for the prize roulette */
+.glow-on-hover {
+  box-shadow: 0 0 10px rgba(219, 39, 119, 0.5);
+  transition: all 0.3s ease-in-out;
+}
+
+.glow-on-hover:hover {
+  box-shadow: 0 0 20px rgba(219, 39, 119, 0.8);
+  transform: translateY(-2px);
+}
+
+/* Custom scrollbar for prize history */
+.history-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #c084fc #f1f1f1;
+}
+
+.history-scroll::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.history-scroll::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+.history-scroll::-webkit-scrollbar-thumb {
+  background: #c084fc;
+  border-radius: 3px;
+  transition: background-color 0.2s;
+}
+
+.history-scroll::-webkit-scrollbar-thumb:hover {
+  background: #a855f7;
+}
+
+/* Prize history item animation */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.prize-item {
+  animation: fadeIn 0.3s ease-out forwards;
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.prize-item:hover {
+  transform: translateX(4px);
+}
+
+/* Responsive adjustments */
+.prize-history-panel {
+  min-width: 0; /* Allow flex-shrink */
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.prize-history-panel ul {
+  min-height: 0; /* Allow scrolling */
+}
+
+@media (max-width: 1024px) {
+  .prize-history-panel {
+    margin-top: 1.5rem;
+    max-height: 400px;
+  }
+}
+
+/* Prevent content jumps */
+.result-container {
+  min-height: 4rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Efeito de rotação suave */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 20s linear infinite;
 }
