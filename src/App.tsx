@@ -291,15 +291,16 @@ function App() {
                 <span className="history-prize font-medium text-gray-800 dark:text-gray-100">
                   {item.name}
                 </span>
-                <span className="history-time text-sm text-gray-500 dark:text-gray-400 flex items-center mt-1">
-                  <span className="inline-block mr-1">🕒</span>
-                  {formatTime(item.timestamp)}
-                </span>
               </li>
             ))}
           </ul>
         </div>
       )}
+      
+      {/* Footer */}
+      <footer className="text-center py-4 text-gray-500 dark:text-gray-400 text-sm mt-8">
+        Versão 0.0.1
+      </footer>
     </div>
   );
 }
