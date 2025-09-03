@@ -225,17 +225,8 @@ function App() {
     setSpinning(false);
   }, [playWin]);
 
-  // Formatar a data para exibição
-  const formatTime = (timestamp: number) => {
-    return new Date(timestamp).toLocaleTimeString('pt-BR', {
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit'
-    });
-  };
-
   return (
-    <div className="App min-h-screen flex flex-col">
+    <div className="App min-h-screen flex flex-col overflow-y-auto">
       {/* Theme Toggle Button */}
       <button
         className="fixed top-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -249,12 +240,12 @@ function App() {
         )}
       </button>
 
-      <header className="header sticky top-0 pt-4 pb-2">
+      <header className="header">
         <h1 className="title">Roleta de Prêmios</h1>
         <p className="subtitle">Gire a roleta e descubra qual prêmio você ganhou!</p>
       </header>
 
-      <main className="flex-grow flex flex-col items-center justify-center px-4 py-2 w-full">
+      <main className="flex-grow flex flex-col items-center w-full px-4 py-4">
         <div className="wheel-container">
           <Wheel
             spinning={spinning}
@@ -273,28 +264,26 @@ function App() {
         />
       </main>
 
-      {prizeHistory.length > 0 && (
-        <div className="prize-history-container">
-          <h2 className="prize-history-title">Histórico de Prêmios</h2>
-          <ul className="history-list">
-            {prizeHistory.slice(0, 6).map((item, index) => (
-              <li
-                key={index}
-                className="history-item"
-                style={{
-                  animation: `fadeIn 0.3s ease-out ${index * 0.1}s both`
-                }}
-              >
-                <span className="history-prize">{item.name}</span>
-                <span className="history-time">
-                  <span className="inline-block mr-1">🕒</span>
-                  {formatTime(item.timestamp)}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div className="w-full max-w-4xl mx-auto px-4 pb-8">
+        {prizeHistory.length > 0 && (
+          <div className="prize-history-container">
+            <h2 className="prize-history-title">Histórico de Prêmios</h2>
+            <ul className="history-list">
+              {prizeHistory.slice(0, 6).map((item, index) => (
+                <li
+                  key={index}
+                  className="history-item"
+                  style={{
+                    animation: `fadeIn 0.3s ease-out ${index * 0.1}s both`
+                  }}
+                >
+                  <span className="history-prize">{item.name}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
