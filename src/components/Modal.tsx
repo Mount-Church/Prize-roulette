@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from 'react';
 // Import images with type assertions
 import andersonIda1 from '../assets/images/anderson-ida1.png';
-import deni1 from '../assets/images/deni-1.png';
+import deni2 from '../assets/images/deni-2.png';
 import juIda1 from '../assets/images/ju-ida-1.png';
 import juIda2 from '../assets/images/ju-ida-2.png';
 import thais1 from '../assets/images/thais-1.png';
@@ -16,7 +16,7 @@ interface Avatar {
 // Type assertion for image imports
 const avatars: Avatar[] = [
     { src: andersonIda1 as string, alt: 'Anderson' },
-    { src: deni1 as string, alt: 'Deni' },
+    { src: deni2 as string, alt: 'Deni' },
     { src: juIda1 as string, alt: 'Ju 1' },
     { src: juIda2 as string, alt: 'Ju 2' },
     { src: thais1 as string, alt: 'Thais' },
