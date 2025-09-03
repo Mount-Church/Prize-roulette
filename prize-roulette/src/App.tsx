@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import confetti from 'canvas-confetti';
 import { playWinSound, playSpinSound } from './utils/audioUtils';
 import { Wheel } from './components/Wheel';
+import { Modal } from './components/Modal';
 // Ícones substituídos por emojis para evitar dependência externa
 import './App.css';
 
@@ -32,6 +33,8 @@ function App() {
   const [result, setResult] = useState('Clique em "Girar Roleta" para começar!');
   const [prizeHistory, setPrizeHistory] = useState<PrizeHistory[]>([]);
   const [darkMode, setDarkMode] = useState(false);
+  const [showResultModal, setShowResultModal] = useState(false);
+  const [currentPrize, setCurrentPrize] = useState<{name: string, color: string} | null>(null);
 
   // Initialize theme on component mount
   useEffect(() => {
@@ -82,57 +85,39 @@ function App() {
 
   // Efeito de confete
   const triggerConfetti = useCallback(() => {
-    const count = 200;
+    // Primeira explosão de confete (centro)
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { x: 0.5, y: 0.6 },
+      gravity: 1,
+      decay: 0.94,
+      scalar: 1.2,
+    });
 
-    const shoot = () => {
-      // Primeira explosão de confete (centro)
+    // Segunda explosão de confete (esquerda)
+    setTimeout(() => {
       confetti({
-        particleCount: Math.floor(count * 0.25),
+        particleCount: 50,
         spread: 100,
-        ticks: 100,
+        origin: { x: 0.3, y: 0.7 },
         gravity: 1,
         decay: 0.94,
-        startVelocity: 30,
-        origin: { x: 0.5, y: 0.7 },
-        scalar: 1.2,
-        shapes: ['circle'],
-        colors: ['#FF0000', '#0000FF', '#00FF00', '#FFFF00', '#FF00FF', '#00FFFF'],
+        scalar: 1.5,
       });
+    }, 200);
 
-      // Segunda explosão de confete (esquerda)
-      setTimeout(() => {
-        confetti({
-          particleCount: Math.floor(count * 0.2),
-          spread: 100,
-          ticks: 100,
-          gravity: 1,
-          decay: 0.94,
-          startVelocity: 25,
-          origin: { x: 0.3, y: 0.7 },
-          scalar: 0.75,
-          shapes: ['circle'],
-          colors: ['#FF0000', '#0000FF', '#00FF00', '#FFFF00', '#FF00FF', '#00FFFF'],
-        });
-      }, 250);
-
-      // Terceira explosão de confete (direita)
-      setTimeout(() => {
-        confetti({
-          particleCount: Math.floor(count * 0.1),
-          spread: 100,
-          ticks: 100,
-          gravity: 1,
-          decay: 0.94,
-          startVelocity: 35,
-          origin: { x: 0.7, y: 0.7 },
-          scalar: 1.5,
-          shapes: ['star'],
-          colors: ['#FF0000', '#0000FF', '#00FF00', '#FFFF00', '#FF00FF', '#00FFFF'],
-        });
-      }, 400);
-    };
-
-    shoot();
+    // Terceira explosão de confete (direita)
+    setTimeout(() => {
+      confetti({
+        particleCount: 50,
+        spread: 100,
+        origin: { x: 0.7, y: 0.7 },
+        gravity: 1,
+        decay: 0.94,
+        scalar: 1.5,
+      });
+    }, 400);
   }, []);
 
   const handleSpinStart = useCallback(() => {
@@ -141,16 +126,27 @@ function App() {
     playSpinSound();
   }, []);
 
-  const handleSpinEnd = useCallback((prize: { id: number; name: string; color: string }) => {
-    setResult(`Você ganhou: ${prize.name}`);
+  const handleSpinEnd = useCallback((prize: Prize) => {
+    setResult(`Parabéns! Você ganhou: ${prize.name}`);
+    setCurrentPrize(prize);
+    setShowResultModal(true);
+    
+    // Adiciona o prêmio ao histórico
     setPrizeHistory(prev => [
-      { ...prize, timestamp: Date.now() },
-      ...prev.slice(0, 4)
+      ...prev,
+      { ...prize, timestamp: Date.now() }
     ]);
+    
+    // Efeitos de vitória
     playWinSound();
-    triggerConfetti();
+    confetti({
+      particleCount: 100,
+      spread: 70,
+      origin: { x: 0.5, y: 0.6 }
+    });
+    
     setSpinning(false);
-  }, [triggerConfetti]);
+  }, []);
 
   // Formatar a data para exibição
   const formatTime = (timestamp: number) => {
@@ -191,20 +187,20 @@ function App() {
           />
         </div>
 
-        <div className={`result-display ${!result.includes('Girar') ? 'winner' : ''}`}>
-          <p className="result-text animate-fade-in">
-            {!result.includes('Girar') ? (
-              <>
-                <span className="text-2xl animate-bounce inline-block" style={{ animationDuration: '2s' }}>🎉</span>
-                <span className="animate-color-change bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">
-                  {result}
-                </span>
-              </>
-            ) : (
-              <span className="text-gray-600 dark:text-gray-300">{result}</span>
-            )}
+        {/* Mensagem de status */}
+        <div className="text-center mt-4 min-h-[40px]">
+          <p className="text-gray-600 dark:text-gray-300">
+            {result}
           </p>
         </div>
+
+        {/* Modal de resultado */}
+        <Modal 
+          isOpen={showResultModal}
+          onClose={() => setShowResultModal(false)}
+          prizeName={currentPrize?.name}
+          prizeColor={currentPrize?.color}
+        />
 
       </main>
 
