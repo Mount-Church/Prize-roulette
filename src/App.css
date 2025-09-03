@@ -19,11 +19,32 @@
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
 }
 
+/* Dark theme for system preference */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    --background: #111827;
+    --card-bg: #1f2937;
+    --text: #f9fafb;
+    --text-secondary: #9ca3af;
+  }
+}
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-y: contain;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -32,6 +53,8 @@ body {
   color: var(--text);
   line-height: 1.5;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Apply dark mode to all elements */
@@ -39,40 +62,39 @@ body {
 [data-theme='dark'] .result-display {
   background-color: var(--card-bg);
   color: var(--text);
-}
-
-[data-theme='dark'] .history-item {
-  border-color: #374151;
-}
-
-[data-theme='dark'] .button {
-  background-color: var(--primary);
-  color: white;
-}
-
-[data-theme='dark'] .button:hover {
-  background-color: #6d28d9;
-}
-
-[data-theme='dark'] .button:disabled {
-  background-color: #4b5563;
-}
-
-#root {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
-  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+/* Scrollbar styles */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
 
 /* Header */
 .header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1.5rem;
+  padding: 0 1rem;
 }
 
 .title {
@@ -212,29 +234,162 @@ body {
   margin: 0;
 }
 
-/* Theme Toggle */
+/* Theme Toggle Button */
 .theme-toggle {
   position: fixed;
   top: 1rem;
   right: 1rem;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--card-bg);
-  border: none;
+  border: 2px solid var(--text);
   border-radius: 50%;
-  width: 40px;
-  height: 40px;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.theme-toggle:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.4);
+}
+
+.theme-toggle:hover {
+  transform: scale(1.1) rotate(30deg);
+}
+
+/* Ajustes para o tema escuro */
+[data-theme='dark'] .theme-toggle {
+  border-color: var(--text);
+  background: var(--card-bg);
+}
+
+/* Estilos para o botão de girar a roleta */
+.spin-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  background: linear-gradient(145deg, #ef4444, #dc2626);
+  border: 3px solid #fff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2), inset 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: var(--shadow);
-  transition: all 0.3s ease;
+  z-index: 10;
+  transition: all 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  text-transform: uppercase;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-.theme-toggle:hover {
-  transform: rotate(30deg);
+.spin-button:active {
+  transform: translate(-50%, -50%) scale(0.95);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.spin-button:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.4);
+}
+
+.spin-button:not(:disabled):hover {
+  background: linear-gradient(145deg, #dc2626, #b91c1c);
+  transform: translate(-50%, -50%) scale(1.02);
+}
+
+.spin-button:disabled {
+  background: linear-gradient(145deg, #9ca3af, #6b7280);
+  cursor: not-allowed;
+  transform: translate(-50%, -50%) scale(0.98);
+  opacity: 0.9;
+}
+
+/* Melhorias para dispositivos móveis */
+@media (max-width: 640px) {
+  .theme-toggle {
+    width: 2.5rem;
+    height: 2.5rem;
+    top: 0.75rem;
+    right: 0.75rem;
+  }
+  
+  .theme-toggle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+  
+  .spin-button {
+    width: 4.5rem;
+    height: 4.5rem;
+  }
+  
+  .spin-button-inner {
+    font-size: 0.8rem;
+  }
 }
 
 /* Melhorias de responsividade */
+@media (max-width: 640px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  .title {
+    font-size: 1.75rem;
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+  }
+  
+  .subtitle {
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+  
+  .wheel-container {
+    margin: 0 auto 1.5rem;
+    max-width: 95vw;
+  }
+  
+  /* Melhorias na rolagem em iOS */
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+  }
+  
+  /* Ajustes para o tema toggle */
+  [data-theme-toggle] {
+    touch-action: manipulation;
+  }
+  
+  /* Melhorias de toque para botões interativos */
+  button, [role="button"] {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Ajustes para o modal em telas pequenas */
+  .modal-content {
+    max-height: 90vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
 @media (max-width: 768px) {
   #root {
     padding: 1rem 0.5rem;
@@ -279,6 +434,28 @@ body {
   
   .history-list {
     grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  }
+}
+
+@media (min-width: 641px) and (max-width: 1024px) {
+  .prize-history-panel {
+    margin-top: 1.5rem;
+    max-height: 50vh;
+  }
+  
+  .history-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  
+  /* Melhorias de rolagem suave */
+  .overflow-y-auto {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+  }
+  
+  /* Ajustes para o wheel container */
+  .wheel-container {
+    max-width: 90%;
   }
 }
 

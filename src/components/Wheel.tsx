@@ -97,14 +97,18 @@ export const Wheel: React.FC<WheelProps> = ({
   const segmentAngle = 360 / prizes.length;
 
   return (
-    <div className="w-full max-w-2xl mx-auto">
+    <div className="w-full max-w-md mx-auto px-2 sm:px-3 md:px-4">
       <div className="relative w-full h-0 pb-[100%]" style={{
         contain: 'layout style paint',
-        transform: 'translateZ(0)'
+        transform: 'translateZ(0)',
+        maxWidth: 'min(100vw - 2rem, 500px)',
+        maxHeight: 'min(100vw - 2rem, 500px)',
+        margin: '0 auto',
+        touchAction: 'none'
       }}>
         <div
           ref={wheelRef}
-          className="absolute inset-0 rounded-full shadow-xl will-change-transform transform-gpu overflow-hidden"
+          className="absolute inset-0 rounded-full shadow-xl will-change-transform transform-gpu overflow-hidden touch-none select-none"
           style={{
             transform: 'rotate(0deg)',
             width: '100%',
@@ -113,7 +117,9 @@ export const Wheel: React.FC<WheelProps> = ({
             WebkitBackfaceVisibility: 'hidden',
             transformStyle: 'preserve-3d',
             WebkitTransformStyle: 'preserve-3d',
-            willChange: 'transform'
+            willChange: 'transform',
+            touchAction: 'none',
+            WebkitTapHighlightColor: 'transparent'
           }}
         >
           {/* Pizza crust */}
@@ -165,17 +171,17 @@ export const Wheel: React.FC<WheelProps> = ({
           })}
 
           {/* Center pepperoni */}
-          <div className="absolute top-1/2 left-1/2 w-1/5 h-1/5 bg-red-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 border-4 border-red-800 z-10">
+          <div className="absolute top-1/2 left-1/2 w-1/4 h-1/4 sm:w-1/5 sm:h-1/5 bg-red-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 border-2 sm:border-3 md:border-4 border-red-800 z-10">
             <div className="absolute inset-0.5 rounded-full bg-red-500"></div>
           </div>
         </div>
 
         {/* Indicator */}
-        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-l-12 border-r-12 border-b-24 border-l-transparent border-r-transparent border-b-red-600 z-30" />
+        <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-0 h-0 border-l-8 sm:border-l-10 border-r-8 sm:border-r-10 border-b-16 sm:border-b-20 border-l-transparent border-r-transparent border-b-red-600 z-30" />
 
         {/* Center button */}
-        <div
-          className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-20 h-20 sm:w-24 sm:h-24 md:w-28 md:h-28 z-20"
+        <button
+          className={`spin-button ${spinning ? 'disabled' : ''}`}
           onClick={(e) => {
             e.stopPropagation();
             if (!spinning) {
@@ -185,33 +191,31 @@ export const Wheel: React.FC<WheelProps> = ({
               startSpin();
             }
           }}
+          aria-label={spinning ? 'Girando...' : 'Girar roleta'}
+          disabled={spinning}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              if (!spinning) {
+                onSpinStart();
+                startSpin();
+              }
+            }
+          }}
         >
-          <div className="w-full h-full bg-white rounded-full flex items-center justify-center shadow-lg cursor-pointer group p-1.5">
-            <div
-              className={`w-full h-full bg-gradient-to-br from-red-600 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl md:text-2xl transition-all duration-300 transform hover:scale-105 ${spinning ? 'opacity-75 cursor-not-allowed' : 'cursor-pointer group-hover:shadow-lg group-hover:from-red-700 group-hover:to-red-600'
-                }`}
-            >
-              {spinning ? (
-                <svg className="animate-spin h-6 w-6 sm:h-7 sm:w-7 md:h-8 md:w-8 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-              ) : (
-                <span className="animate-pulse">GIRAR</span>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+          {spinning ? '...' : 'GIRAR'}
+        </button>
 
-      {/* Tabela de prêmios simples */}
-      <div className="mt-8 w-full max-w-md mx-auto">
-        <h2 className="text-2xl font-bold text-center mb-4 text-gray-800 dark:text-white">Lista de Prêmios</h2>
-        <div className="space-y-2">
+      </div>
+      
+      {/* Lista de prêmios */}
+      <div className="mt-8 w-full max-w-md mx-auto px-4">
+        <h2 className="text-xl font-bold text-center mb-4 text-gray-800 dark:text-white">Prêmios Disponíveis</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {prizes.map((prize) => (
             <div
               key={`prize-${prize.id}`}
-              className={`${prize.color} text-white font-medium py-3 px-4 rounded-md shadow`}
+              className={`${prize.color} text-white font-medium py-2 px-3 sm:py-3 sm:px-4 rounded-md shadow text-sm sm:text-base text-center`}
             >
               {prize.name}
             </div>
