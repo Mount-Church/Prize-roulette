@@ -179,6 +179,9 @@ export const Wheel: React.FC<WheelProps> = ({
           onClick={(e) => {
             e.stopPropagation();
             if (!spinning) {
+              // Call onSpinStart to trigger the sound
+              onSpinStart();
+              // Then start the spinning animation
               startSpin();
             }
           }}
