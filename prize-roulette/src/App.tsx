@@ -235,7 +235,7 @@ function App() {
   };
 
   return (
-    <div className="App">
+    <div className="App min-h-screen flex flex-col">
       {/* Theme Toggle Button */}
       <button
         className="fixed top-4 right-4 z-50 p-2 rounded-full bg-white dark:bg-gray-800 shadow-md hover:shadow-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500"
@@ -249,13 +249,13 @@ function App() {
         )}
       </button>
 
-      <header className="header">
+      <header className="header sticky top-0 pt-4 pb-2">
         <h1 className="title">Roleta de Prêmios</h1>
         <p className="subtitle">Gire a roleta e descubra qual prêmio você ganhou!</p>
       </header>
 
-      <main>
-        <div className="wheel-container flex flex-col items-center">
+      <main className="flex-grow flex flex-col items-center justify-center px-4 py-2 w-full">
+        <div className="wheel-container">
           <Wheel
             spinning={spinning}
             onSpinStart={handleSpinStart}
@@ -271,27 +271,22 @@ function App() {
           prizeName={currentPrize?.name}
           prizeColor={currentPrize?.color}
         />
-
       </main>
 
       {prizeHistory.length > 0 && (
-        <div className="w-full max-w-2xl mx-auto mt-8 px-4">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">Histórico de Prêmios</h2>
-          <ul className="history-list space-y-2">
+        <div className="prize-history-container">
+          <h2 className="prize-history-title">Histórico de Prêmios</h2>
+          <ul className="history-list">
             {prizeHistory.slice(0, 6).map((item, index) => (
               <li
                 key={index}
-                className="history-item bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg p-3 shadow-sm transform transition-all duration-300 hover:scale-[1.02] hover:shadow-md border border-gray-100 dark:border-gray-700"
+                className="history-item"
                 style={{
-                  animation: `fadeIn 0.3s ease-out ${index * 0.1}s both`,
-                  opacity: 0,
-                  transform: 'translateX(-10px)'
+                  animation: `fadeIn 0.3s ease-out ${index * 0.1}s both`
                 }}
               >
-                <span className="history-prize font-medium text-gray-800 dark:text-gray-100">
-                  {item.name}
-                </span>
-                <span className="history-time text-sm text-gray-500 dark:text-gray-400 flex items-center mt-1">
+                <span className="history-prize">{item.name}</span>
+                <span className="history-time">
                   <span className="inline-block mr-1">🕒</span>
                   {formatTime(item.timestamp)}
                 </span>

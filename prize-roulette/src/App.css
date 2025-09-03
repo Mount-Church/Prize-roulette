@@ -72,16 +72,23 @@ body {
 /* Header */
 .header {
   text-align: center;
-  margin-bottom: 2.5rem;
+  margin-bottom: 1rem;
+  padding: 0 1rem;
+  position: relative;
+  z-index: 2;
+  background: var(--background);
+  width: 100%;
+  padding-top: 1rem;
 }
 
 .title {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   font-weight: 800;
   background: linear-gradient(90deg, var(--primary), var(--primary-light));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   margin-bottom: 0.5rem;
+  line-height: 1.2;
 }
 
 .subtitle {
@@ -95,9 +102,10 @@ body {
 .wheel-container {
   position: relative;
   width: 100%;
-  max-width: 500px;
-  margin: 0 auto 2.5rem;
+  max-width: 350px;
+  margin: 1rem auto 2rem;
   aspect-ratio: 1;
+  z-index: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -237,7 +245,12 @@ body {
 /* Melhorias de responsividade */
 @media (max-width: 768px) {
   #root {
-    padding: 1rem 0.5rem;
+    padding: 0.5rem;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: 2rem;
   }
   
   .title {
@@ -384,10 +397,105 @@ body {
   animation: glow 1s ease-in-out infinite alternate;
 }
 
-/* Custom styles for the prize roulette */
+/* Custom styles for the prize roustele */
 .glow-on-hover {
   box-shadow: 0 0 10px rgba(219, 39, 119, 0.5);
   transition: all 0.3s ease-in-out;
+}
+
+/* Prize history container */
+.prize-history-container {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.prize-history-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  color: var(--text);
+  text-align: center;
+}
+
+.history-list {
+  background: var(--card-bg);
+  border-radius: 0.75rem;
+  padding: 0.75rem;
+  box-shadow: var(--shadow);
+  max-height: 300px;
+  overflow-y: auto;
+  margin-bottom: 1.5rem;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 0.5rem;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.history-item:last-child {
+  margin-bottom: 0;
+}
+
+.history-prize {
+  font-weight: 500;
+  color: var(--text);
+  flex: 1;
+}
+
+.history-time {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  margin-left: 0.75rem;
+}
+
+/* Scrollbar styling */
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.history-list::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 3px;
+}
+
+.history-list::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 640px) {
+  .prize-history-container {
+    padding: 0 0.75rem 1.5rem;
+  }
+  
+  .history-list {
+    max-height: 250px;
+  }
+  
+  .history-item {
+    padding: 0.6rem 0.8rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .history-time {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.75rem;
+  }
 }
 
 .glow-on-hover:hover {
@@ -396,11 +504,6 @@ body {
 }
 
 /* Custom scrollbar for prize history */
-.history-scroll {
-  scrollbar-width: thin;
-  scrollbar-color: #c084fc #f1f1f1;
-}
-
 .history-scroll::-webkit-scrollbar {
   width: 6px;
   height: 6px;
