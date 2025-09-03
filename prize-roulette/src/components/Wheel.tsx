@@ -97,36 +97,86 @@ export const Wheel: React.FC<WheelProps> = ({
     <div className="relative w-full h-0 pb-[100%] max-w-[32rem] mx-auto">
       <div 
         ref={wheelRef}
-        className="absolute inset-0 rounded-full border-4 border-gray-200 shadow-xl overflow-hidden transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl hover:border-purple-300 transform-gpu"
+        className="absolute inset-0 rounded-full border-8 border-amber-800 shadow-xl overflow-visible transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl transform-gpu"
         style={{
-          transform: 'rotate(0deg)', // Initial transform to prevent layout shift
+          transform: 'rotate(0deg)',
           width: '100%',
           height: '100%',
           position: 'absolute',
           top: 0,
-          left: 0
+          left: 0,
+          background: 'radial-gradient(circle, #fde68a 0%, #d97706 100%)',
+          boxShadow: 'inset 0 0 30px rgba(120, 53, 15, 0.5)'
         }}
       >
+        {/* Pizza crust */}
+        <div className="absolute inset-0 rounded-full border-8 border-amber-900 bg-amber-800">
+          <div className="absolute inset-0 rounded-full" style={{
+            background: 'radial-gradient(circle at 30% 30%, #fde68a 0%, #d97706 100%)',
+            boxShadow: 'inset 0 0 20px rgba(0,0,0,0.2)'
+          }}></div>
+        </div>
+        
         {prizes.map((prize, index) => {
           const rotation = index * segmentAngle;
-          const skew = segmentAngle + 0.5; // Slight skew for better visual
+          const middleAngle = rotation + (segmentAngle / 2);
           
           return (
-            <div
-              key={prize.id}
-              className={`absolute top-0 left-1/2 w-1/2 h-1/2 origin-bottom-right ${prize.color}`}
-              style={{
-                transform: `rotate(${rotation + segmentAngle / 2}deg) skewY(${90 - skew}deg)`,
-              }}
-            >
-              <div 
-                className="absolute w-full text-center text-white font-bold text-sm transform -skew-y-0"
+            <div key={prize.id}>
+              {/* Pizza slice */}
+              <div
+                className="absolute top-0 left-0 w-full h-full origin-center"
                 style={{
-                  transform: 'skewY(90deg) rotate(45deg)',
-                  width: '100%',
-                  textShadow: '1px 1px 2px rgba(0,0,0,0.5)',
-                  bottom: '20px',
-                  left: '0',
+                  transform: `rotate(${rotation}deg)`,
+                  clipPath: `polygon(50% 50%, 50% 0, ${50 + Math.sin(segmentAngle * Math.PI / 180) * 100}% ${50 - Math.cos(segmentAngle * Math.PI / 180) * 100}%)`,
+                }}
+              >
+                <div 
+                  className={`absolute top-0 left-0 w-full h-full ${prize.color} opacity-90`}
+                  style={{
+                    clipPath: 'polygon(50% 50%, 50% 0, 100% 0, 100% 100%)',
+                    backgroundImage: 'linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(0,0,0,0.1) 100%)',
+                    borderRight: '1px solid rgba(0,0,0,0.1)'
+                  }}
+                >
+                  {/* Pizza topping texture */}
+                  <div className="absolute inset-0" style={{
+                    backgroundImage: 'radial-gradient(circle, rgba(0,0,0,0.1) 1px, transparent 1px)',
+                    backgroundSize: '15px 15px',
+                    opacity: '0.6'
+                  }}></div>
+                  
+                  {/* Cheese texture */}
+                  <div className="absolute inset-0" style={{
+                    backgroundImage: 'radial-gradient(ellipse at center, rgba(255,255,255,0.3) 0%, transparent 70%)',
+                  }}></div>
+                </div>
+              </div>
+              
+              {/* Prize name */}
+              <div 
+                className="absolute text-center font-bold text-white"
+                style={{
+                  left: '50%',
+                  top: '50%',
+                  transform: `translate(-50%, -50%) rotate(${middleAngle > 90 && middleAngle < 270 ? middleAngle + 180 : middleAngle}deg)`,
+                  textShadow: '1px 1px 3px rgba(0,0,0,0.8), -1px -1px 3px rgba(0,0,0,0.4)',
+                  width: 'max-content',
+                  maxWidth: '35%',
+                  color: '#fff',
+                  fontWeight: 800,
+                  textTransform: 'uppercase' as const,
+                  fontSize: '0.7rem',
+                  letterSpacing: '0.5px',
+                  padding: '4px 12px',
+                  borderRadius: '20px',
+                  backgroundColor: 'rgba(0,0,0,0.4)',
+                  backdropFilter: 'blur(4px)',
+                  border: '1px solid rgba(255,255,255,0.1)',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.3)',
+                  whiteSpace: 'nowrap' as const,
+                  overflow: 'hidden' as const,
+                  textOverflow: 'ellipsis' as const
                 }}
               >
                 {prize.name}
@@ -134,6 +184,11 @@ export const Wheel: React.FC<WheelProps> = ({
             </div>
           );
         })}
+        
+        {/* Center pepperoni */}
+        <div className="absolute top-1/2 left-1/2 w-1/5 h-1/5 bg-red-600 rounded-full transform -translate-x-1/2 -translate-y-1/2 border-4 border-red-800 z-10">
+          <div className="absolute inset-0.5 rounded-full bg-red-500"></div>
+        </div>
       </div>
       
       {/* Indicator */}
@@ -149,10 +204,10 @@ export const Wheel: React.FC<WheelProps> = ({
           }
         }}
       >
-        <div className="w-full h-full bg-white rounded-full flex items-center justify-center shadow-lg cursor-pointer group">
+        <div className="w-full h-full bg-white rounded-full flex items-center justify-center shadow-lg cursor-pointer group p-1.5">
           <div 
-            className={`w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gradient-to-br from-red-600 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl md:text-2xl hover:from-red-700 hover:to-red-600 transition-all duration-300 transform hover:scale-105 glow-on-hover ${
-              spinning ? 'opacity-75 cursor-not-allowed' : 'cursor-pointer group-hover:shadow-lg'
+            className={`w-full h-full bg-gradient-to-br from-red-600 to-red-500 rounded-full flex items-center justify-center text-white font-bold text-lg sm:text-xl md:text-2xl transition-all duration-300 transform hover:scale-105 ${
+              spinning ? 'opacity-75 cursor-not-allowed' : 'cursor-pointer group-hover:shadow-lg group-hover:from-red-700 group-hover:to-red-600'
             }`}
           >
             {spinning ? (

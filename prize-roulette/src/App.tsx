@@ -15,14 +15,16 @@ type PrizeHistory = Prize & {
   timestamp: number;
 };
 
-// Cores para cada seção da roleta
+// Cores para cada seção da roleta (temas de pizza)
 const prizes = [
-  { id: 1, name: 'Presente surpresa', color: 'bg-red-500' },
-  { id: 2, name: 'Chocolate', color: 'bg-blue-500' },
-  { id: 3, name: 'Bombom', color: 'bg-green-500' },
-  { id: 4, name: 'Pirulito', color: 'bg-yellow-500' },
-  { id: 5, name: 'Oração do líder', color: 'bg-purple-500' },
-  { id: 6, name: 'Oração por alguém', color: 'bg-pink-500' },
+  { id: 1, name: 'Presente surpresa', color: 'bg-red-600' },    // Molho de tomate
+  { id: 2, name: 'Chocolate', color: 'bg-amber-900' },          // Chocolate
+  { id: 3, name: 'Brinquedo', color: 'bg-yellow-300' },         // Queijo
+  { id: 4, name: 'Doces', color: 'bg-pink-400' },               // Peperoni
+  { id: 5, name: 'Biscoitos', color: 'bg-amber-400' },          // Bacon
+  { id: 6, name: 'Bombons', color: 'bg-green-600' },            // Manjericão
+  { id: 7, name: 'Bala', color: 'bg-orange-400' },              // Calabresa
+  { id: 8, name: 'Pirulito', color: 'bg-purple-500' },          // Berinjela
 ];
 
 function App() {
