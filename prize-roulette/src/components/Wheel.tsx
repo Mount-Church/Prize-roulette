@@ -42,8 +42,11 @@ export const Wheel: React.FC<WheelProps> = ({
       animationRef.current = requestAnimationFrame(animate);
     } else {
       // Animation complete - select random prize and call onSpinEnd with it
-      const randomPrize = prizes[Math.floor(Math.random() * prizes.length)];
-      onSpinEnd(randomPrize);
+      const randomIndex = Math.floor(Math.random() * prizes.length);
+      const randomPrize = prizes[randomIndex];
+      if (randomPrize) {
+        onSpinEnd(randomPrize);
+      }
     }
   }, [onSpinEnd, prizes]);
 
@@ -94,7 +97,15 @@ export const Wheel: React.FC<WheelProps> = ({
     <div className="relative w-full h-0 pb-[100%] max-w-[32rem] mx-auto">
       <div 
         ref={wheelRef}
-        className="absolute inset-0 rounded-full border-4 border-gray-200 shadow-xl overflow-hidden transition-all duration-300 ease-out will-change-transform hover:shadow-2xl hover:border-purple-300 transform-gpu"
+        className="absolute inset-0 rounded-full border-4 border-gray-200 shadow-xl overflow-hidden transition-transform duration-300 ease-out will-change-transform hover:shadow-2xl hover:border-purple-300 transform-gpu"
+        style={{
+          transform: 'rotate(0deg)', // Initial transform to prevent layout shift
+          width: '100%',
+          height: '100%',
+          position: 'absolute',
+          top: 0,
+          left: 0
+        }}
       >
         {prizes.map((prize, index) => {
           const rotation = index * segmentAngle;

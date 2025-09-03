@@ -192,10 +192,12 @@ function App() {
         <div className={`result-display ${!result.includes('Girar') ? 'winner' : ''}`}>
           <p className="result-text animate-fade-in">
             {!result.includes('Girar') ? (
-              <span className="animate-color-change bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">
-                <span className="inline-block animate-bounce" style={{ animationDuration: '2s' }}>🎉</span>
-                <span className="ml-2">{result}</span>
-              </span>
+              <>
+                <span className="text-2xl animate-bounce inline-block" style={{ animationDuration: '2s' }}>🎉</span>
+                <span className="animate-color-change bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 bg-clip-text text-transparent">
+                  {result}
+                </span>
+              </>
             ) : (
               <span className="text-gray-600 dark:text-gray-300">{result}</span>
             )}
@@ -205,8 +207,8 @@ function App() {
       </main>
       
       {prizeHistory.length > 0 && (
-        <div className="history-container">
-          <h2 className="history-title">Histórico de Prêmios</h2>
+        <div className="w-full max-w-2xl mx-auto mt-8 px-4">
+          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4 text-center">Histórico de Prêmios</h2>
           <ul className="history-list space-y-2">
             {prizeHistory.slice(0, 6).map((item, index) => (
               <li 
